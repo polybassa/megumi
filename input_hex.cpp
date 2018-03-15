@@ -4,7 +4,6 @@
 #include <exception>
 #include "input_hex.h"
 
-
 class hex_parsing_error: public std::exception
 {
  public:
@@ -96,10 +95,12 @@ std::vector<uint8_t> parse_hex_file(const std::string& filename)
       throw hex_parsing_error(lineno, "invalid byte count");
     }
 
-    uint16_t address = (bytes[1] << 8) + bytes[2];
+    uint32_t address = (bytes[1] << 8) + bytes[2] + ex_addr_mask;
     switch(bytes[3]) {
       case 0:  // data
         if(address < ret.size()) {
+	  std::cout << "Addr: " << address << std::endl;
+	  std::cout << line << std::endl;
           throw hex_parsing_error(lineno, "address decreased");
         }
         ret.resize(address, 0xff);
